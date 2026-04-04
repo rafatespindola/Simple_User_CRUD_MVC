@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserRepositoryImp implements UserRepository{
@@ -13,6 +15,7 @@ public class UserRepositoryImp implements UserRepository{
     public UserRepositoryImp(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
     }
+
 
     @Override
     public Integer createUser(AppUser appUser) {
@@ -29,6 +32,57 @@ public class UserRepositoryImp implements UserRepository{
                 .param("address", appUser.getAddress())
                 .param("user_type", appUser.getUserType().name())
                 .param("last_update", agora)
+                .update();
+    }
+
+
+    @Override
+    public List<AppUser> getAllAppUsers(int size, int offset) {
+        return this.jdbcClient
+                .sql("SELECT * FROM users LIMIT :size OFFSET :offset")
+                .param("size", size)
+                .param("offset", offset)
+                .query(AppUser.class)
+                .list();
+    }
+
+
+    @Override
+    public Optional<AppUser> getAppUserById(Long id) {
+        return this.jdbcClient
+                .sql("SELECT * FROM users WHERE id = :id")
+                .param("id", id)
+                .query(AppUser.class)
+                .optional();
+    }
+
+
+    @Override
+    public Integer updateAppUser(Long id, AppUser appUser) {
+        LocalDateTime agora = LocalDateTime.now();
+        return this.jdbcClient
+                .sql("UPDATE users set " +
+                        "name = :name," +
+                        "email = :email," +
+                        "login = :login," +
+                        "password = :password," +
+                        "address = :address," +
+                        "user_type = :user_type," +
+                        "last_update = :last_update")
+                .param("name", appUser.getName())
+                .param("email", appUser.getEmail())
+                .param("login", appUser.getLogin())
+                .param("password", appUser.getPassword())
+                .param("address", appUser.getAddress())
+                .param("user_type", appUser.getUserType().name())
+                .param("last_update", agora)
+                .update();
+    }
+
+    @Override
+    public Integer deleteAppUser(Long id) {
+        return this.jdbcClient.sql("DELETE FROM users WHERE id = :id")
+                .param("id", id)
                 .update();
     }
 }
