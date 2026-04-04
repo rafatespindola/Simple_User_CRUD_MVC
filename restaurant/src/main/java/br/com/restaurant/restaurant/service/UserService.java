@@ -27,6 +27,10 @@ public class UserService {
         return this.userRepository.getAllAppUsers(size, offset);
     }
 
+    public List<AppUser> getAppUserByName(String name) {
+        return this.userRepository.getAppUserByName(name);
+    }
+
     public Optional<AppUser> getAppUserById(Long id) {
         return this.userRepository.getAppUserById(id);
     }

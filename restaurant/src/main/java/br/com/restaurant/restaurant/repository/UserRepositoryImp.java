@@ -48,6 +48,16 @@ public class UserRepositoryImp implements UserRepository{
 
 
     @Override
+    public List<AppUser> getAppUserByName(String name) {
+        return this.jdbcClient
+                .sql("SELECT * FROM users WHERE name = :name")
+                .param("name", name)
+                .query(AppUser.class)
+                .list();
+    }
+
+
+    @Override
     public Optional<AppUser> getAppUserById(Long id) {
         return this.jdbcClient
                 .sql("SELECT * FROM users WHERE id = :id")

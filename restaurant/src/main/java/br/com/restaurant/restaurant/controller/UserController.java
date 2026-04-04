@@ -45,6 +45,16 @@ public class UserController {
     }
 
 
+    @GetMapping("/name")
+    public ResponseEntity<List<AppUser>> getAppUserByName(
+            @RequestParam("name") String name
+    ) {
+        logger.info("GET -> /api/v1/users/ -> getAppUserByName -> Param name: {}", name);
+        var appUser = this.userService.getAppUserByName(name);
+        return ResponseEntity.ok(appUser);
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<Optional<AppUser>> getAppUserById(
             @PathVariable("id") Long id

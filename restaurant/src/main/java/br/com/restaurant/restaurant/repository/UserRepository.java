@@ -9,6 +9,7 @@ public interface UserRepository {
     Integer createUser(AppUser appUser);
     List<AppUser> getAllAppUsers(int size, int offset);
     Optional<AppUser> getAppUserById(Long id);
+    List<AppUser> getAppUserByName(String name);
     Integer updateAppUser(Long id, AppUser appUser);
     Integer deleteAppUser(Long id);
 }
