@@ -95,4 +95,17 @@ public class UserRepositoryImp implements UserRepository{
                 .param("id", id)
                 .update();
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return !this.jdbcClient
+                .sql("SELECT * \n" +
+                        "FROM users \n" +
+                        "WHERE LOWER(REPLACE(TRIM(email), ' ', '')) = LOWER(REPLACE(TRIM(:email), ' ', ''));")
+                .param("email", email)
+                .query(AppUser.class)
+                .list().isEmpty();
+    }
+
+
 }

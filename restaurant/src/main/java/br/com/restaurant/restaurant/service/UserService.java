@@ -1,7 +1,13 @@
 package br.com.restaurant.restaurant.service;
 
+import br.com.restaurant.restaurant.controller.UserController;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.repository.UserRepository;
+import br.com.restaurant.restaurant.validation.appUser.AppUserValidationHandler;
+import br.com.restaurant.restaurant.validation.appUser.EmailFormatValidationHandler;
+import br.com.restaurant.restaurant.validation.appUser.UniqueEmailValidationHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -11,6 +17,8 @@ import java.util.Optional;
 @Service
 public class UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -18,6 +26,14 @@ public class UserService {
     }
 
     public void createUser(AppUser appUser) {
+        AppUserValidationHandler emailFormatValidation = new EmailFormatValidationHandler();
+        AppUserValidationHandler uniqueEmailValidation = new UniqueEmailValidationHandler(this.userRepository);
+
+        emailFormatValidation.setNext(uniqueEmailValidation);
+        emailFormatValidation.handle(appUser);
+
+        logger.info("createUser: Email ainda não existente na base. Email: {}", appUser.getEmail());
+
         var create = this.userRepository.createUser(appUser);
         Assert.state(create == 1, "Erro ao salvar usuário -> User: " + appUser);
     }

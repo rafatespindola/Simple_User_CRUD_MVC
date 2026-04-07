@@ -12,4 +12,5 @@ public interface UserRepository {
     List<AppUser> getAppUserByName(String name);
     Integer updateAppUser(Long id, AppUser appUser);
     Integer deleteAppUser(Long id);
+    public boolean existsByEmail(String email);
 }
