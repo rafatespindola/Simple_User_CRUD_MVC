@@ -5,6 +5,7 @@ import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.repository.UserRepository;
 import br.com.restaurant.restaurant.validation.appUser.AppUserValidationHandler;
 import br.com.restaurant.restaurant.validation.appUser.EmailFormatValidationHandler;
+import br.com.restaurant.restaurant.validation.appUser.UniqueEmailOnUpdateValidationHandler;
 import br.com.restaurant.restaurant.validation.appUser.UniqueEmailValidationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,12 @@ public class UserService {
     }
 
     public void updateAppUser(Long id, AppUser appUser) {
+        AppUserValidationHandler emailFormatValidation = new EmailFormatValidationHandler();
+        AppUserValidationHandler uniqueEmailOnUpdateValidationHandler = new UniqueEmailOnUpdateValidationHandler(this.userRepository);
+
+        emailFormatValidation.setNext(uniqueEmailOnUpdateValidationHandler);
+        emailFormatValidation.handle(appUser);
+        logger.info("Tudo certo com o email para atualização do usuário. Email: " + appUser.getEmail());
         var update = this.userRepository.updateAppUser(id, appUser);
         Assert.state(update == 1, "Erro ao atualizar appUser. Id: " + id + " AppUser: " + appUser.toString());
     }

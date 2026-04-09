@@ -13,4 +13,5 @@ public interface UserRepository {
     Integer updateAppUser(Long id, AppUser appUser);
     Integer deleteAppUser(Long id);
     public boolean existsByEmail(String email);
+    List<AppUser> getAppUserByEmail(String email);
 }

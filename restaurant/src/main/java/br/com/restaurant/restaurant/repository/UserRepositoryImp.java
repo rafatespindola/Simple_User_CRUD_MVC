@@ -78,7 +78,8 @@ public class UserRepositoryImp implements UserRepository{
                         "password = :password," +
                         "address = :address," +
                         "user_type = :user_type," +
-                        "last_update = :last_update")
+                        "last_update = :last_update WHERE id = :id")
+                .param("id", id)
                 .param("name", appUser.getName())
                 .param("email", appUser.getEmail())
                 .param("login", appUser.getLogin())
@@ -105,6 +106,17 @@ public class UserRepositoryImp implements UserRepository{
                 .param("email", email)
                 .query(AppUser.class)
                 .list().isEmpty();
+    }
+
+    @Override
+    public List<AppUser> getAppUserByEmail(String email) {
+        return this.jdbcClient
+                .sql("SELECT * \n" +
+                        "FROM users \n" +
+                        "WHERE LOWER(REPLACE(TRIM(email), ' ', '')) = LOWER(REPLACE(TRIM(:email), ' ', ''));")
+                .param("email", email)
+                .query(AppUser.class)
+                .list();
     }
 
 
