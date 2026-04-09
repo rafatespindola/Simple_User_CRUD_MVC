@@ -58,7 +58,7 @@ public class UserService {
 
         emailFormatValidation.setNext(uniqueEmailOnUpdateValidationHandler);
         emailFormatValidation.handle(appUser);
-        logger.info("Tudo certo com o email para atualização do usuário. Email: " + appUser.getEmail());
+        logger.info("updateAppUser: Tudo certo com o email para atualização do usuário. Email: " + appUser.getEmail());
         var update = this.userRepository.updateAppUser(id, appUser);
         Assert.state(update == 1, "Erro ao atualizar appUser. Id: " + id + " AppUser: " + appUser.toString());
     }
