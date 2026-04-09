@@ -50,7 +50,9 @@ public class UserRepositoryImp implements UserRepository{
     @Override
     public List<AppUser> getAppUserByName(String name) {
         return this.jdbcClient
-                .sql("SELECT * FROM users WHERE name = :name")
+                    .sql("SELECT * " +
+                            "FROM users " +
+                            "WHERE TRIM(LOWER(name)) LIKE TRIM(LOWER(CONCAT('%', :name, '%')));")
                 .param("name", name)
                 .query(AppUser.class)
                 .list();
@@ -78,7 +80,8 @@ public class UserRepositoryImp implements UserRepository{
                         "password = :password," +
                         "address = :address," +
                         "user_type = :user_type," +
-                        "last_update = :last_update WHERE id = :id")
+                        "last_update = :last_update " +
+                        "WHERE id = :id")
                 .param("id", id)
                 .param("name", appUser.getName())
                 .param("email", appUser.getEmail())
