@@ -122,5 +122,16 @@ public class UserRepositoryImp implements UserRepository{
                 .list();
     }
 
+    @Override
+    public List<AppUser> getAppUserByLogin(String login) {
+        return this.jdbcClient
+                .sql("SELECT * \n" +
+                        "FROM users \n" +
+                        "WHERE REPLACE(TRIM(login), ' ', '') = REPLACE(TRIM(:login), ' ', '');")
+                .param("login", login)
+                .query(AppUser.class)
+                .list();
+    }
+
 
 }

@@ -9,37 +9,37 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Objects;
 
-public class UniqueEmailOnUpdateValidationHandler extends AppUserValidationHandler{
+public class UniqueLoginOnUpdateValidationHandler extends AppUserValidationHandler{
 
     private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    public UniqueEmailOnUpdateValidationHandler(UserRepository userRepository) {
+    public UniqueLoginOnUpdateValidationHandler(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
     public void handle(AppUser appUser) {
-        List<AppUser> appUserList = this.userRepository.getAppUserByEmail(appUser.getEmail());
+
+        List<AppUser> appUserList = this.userRepository.getAppUserByLogin(appUser.getLogin());
 
         if (!appUserList.isEmpty()) {
             if (appUserList.size() == 1){
                 if (!Objects.equals(appUserList.getFirst().getId(), appUser.getId())){
-                    throw new IllegalArgumentException("E-mail já é utilizado por outro usuário. " +
-                            "Usuário já existente: " + appUserList.getFirst().toString() +
-                            " Usuário novo: " + appUser.toString()
-                    );
+                    throw new IllegalArgumentException("Login já é utilizado por outro usuário. " +
+                                "Usuário já existente: " + appUserList.getFirst().toString() +
+                                " Usuário novo: " + appUser.toString()
+                            );
                 }
             } else {
-                throw new IllegalArgumentException("E-mail já é utilizado por outro usuário. ");
+                throw new IllegalArgumentException("Login já é utilizado por outro usuário. Há mais de um usuário com o mesmo login. Isso é crítico.");
             }
         }
 
-        logger.info("E-mail ainda não utilizado ou no máximo utilizado pelo próprio usuário a ser atualizado.");
+        logger.info("Login ainda não utilizado ou no máximo utilizado pelo próprio usuário a ser atualizado.");
 
         if (next != null) {
             next.handle(appUser);
         }
     }
-
 }

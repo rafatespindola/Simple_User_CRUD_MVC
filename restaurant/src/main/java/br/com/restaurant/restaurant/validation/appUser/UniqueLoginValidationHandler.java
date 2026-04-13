@@ -6,29 +6,30 @@ import br.com.restaurant.restaurant.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UniqueEmailValidationHandler extends AppUserValidationHandler{
+import java.util.List;
+
+public class UniqueLoginValidationHandler extends AppUserValidationHandler{
 
     private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    public UniqueEmailValidationHandler(UserRepository userRepository) {
+    public UniqueLoginValidationHandler(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
     public void handle(AppUser appUser) {
-        boolean alreadyExistsUserEmail = this.userRepository.existsByEmail(appUser.getEmail());
+        String login = appUser.getLogin();
+        List<AppUser> appUsers = this.userRepository.getAppUserByLogin(login);
 
-        if (alreadyExistsUserEmail) {
-            throw new IllegalArgumentException("E-mail já utilizado por outro usuário");
+        if (!appUsers.isEmpty()) {
+            throw new IllegalArgumentException("Login já exitente. Utilize outro");
         }
 
-        logger.info("E-mail ainda não utilizado");
+        logger.info("Login ainda não utilizado");
 
         if (next != null) {
             next.handle(appUser);
         }
     }
-
-
 }

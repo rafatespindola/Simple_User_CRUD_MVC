@@ -3,10 +3,7 @@ package br.com.restaurant.restaurant.service;
 import br.com.restaurant.restaurant.controller.UserController;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.repository.UserRepository;
-import br.com.restaurant.restaurant.validation.appUser.AppUserValidationHandler;
-import br.com.restaurant.restaurant.validation.appUser.EmailFormatValidationHandler;
-import br.com.restaurant.restaurant.validation.appUser.UniqueEmailOnUpdateValidationHandler;
-import br.com.restaurant.restaurant.validation.appUser.UniqueEmailValidationHandler;
+import br.com.restaurant.restaurant.validation.appUser.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,13 +24,16 @@ public class UserService {
     }
 
     public void createUser(AppUser appUser) {
+        AppUserValidationHandler uniqueLoginValidation = new UniqueLoginValidationHandler(this.userRepository);
         AppUserValidationHandler emailFormatValidation = new EmailFormatValidationHandler();
         AppUserValidationHandler uniqueEmailValidation = new UniqueEmailValidationHandler(this.userRepository);
 
+        uniqueLoginValidation.setNext(emailFormatValidation);
         emailFormatValidation.setNext(uniqueEmailValidation);
-        emailFormatValidation.handle(appUser);
 
-        logger.info("createUser: Email ainda não existente na base. Email: {}", appUser.getEmail());
+        uniqueLoginValidation.handle(appUser);
+
+        logger.info("createUser: Validações de criação de usuário bem sucedidadas. AppUser: {}", appUser.toString());
 
         var create = this.userRepository.createUser(appUser);
         Assert.state(create == 1, "Erro ao salvar usuário -> User: " + appUser);
@@ -53,12 +53,18 @@ public class UserService {
     }
 
     public void updateAppUser(Long id, AppUser appUser) {
+        appUser.setId(id);
+
+        AppUserValidationHandler uniqueLoginOnUpdateValidationHandler = new UniqueLoginOnUpdateValidationHandler(this.userRepository);
         AppUserValidationHandler emailFormatValidation = new EmailFormatValidationHandler();
         AppUserValidationHandler uniqueEmailOnUpdateValidationHandler = new UniqueEmailOnUpdateValidationHandler(this.userRepository);
 
+        uniqueLoginOnUpdateValidationHandler.setNext(emailFormatValidation);
         emailFormatValidation.setNext(uniqueEmailOnUpdateValidationHandler);
-        emailFormatValidation.handle(appUser);
-        logger.info("updateAppUser: Tudo certo com o email para atualização do usuário. Email: " + appUser.getEmail());
+
+        uniqueLoginOnUpdateValidationHandler.handle(appUser);
+
+        logger.info("updateAppUser: Validações de atualização do usuário bem sucedidas. Email: " + appUser.getEmail());
         var update = this.userRepository.updateAppUser(id, appUser);
         Assert.state(update == 1, "Erro ao atualizar appUser. Id: " + id + " AppUser: " + appUser.toString());
     }
