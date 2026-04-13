@@ -26,9 +26,16 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        String method = request.getMethod();
 
         // libera login
         if (path.startsWith("/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // libera criação de usuário
+        if (path.equals("/api/v1/users") && method.equals("POST")) {
             filterChain.doFilter(request, response);
             return;
         }

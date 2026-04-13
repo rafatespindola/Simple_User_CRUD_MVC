@@ -28,12 +28,11 @@ public class AuthService {
             throw new IllegalStateException("Estado crítico. Há mais de um usuário para o mesmo login. Login: " + request.login());
         }
 
-        // Validação de senha
-        if (!appUserList.getFirst().getPassword().equals(request.password())) {
-            throw new RuntimeException("Senha inválida");
-        }
-
         var appUser = appUserList.getFirst();
+
+        if (!PasswordUtil.matches(request.password(), appUser.getPassword())) {
+            throw new IllegalArgumentException("Login ou senha inválidos");
+        }
 
         String token = jwtService.generateToken(appUser.getId(), appUser.getLogin());
 

@@ -1,5 +1,6 @@
 package br.com.restaurant.restaurant.service;
 
+import br.com.restaurant.restaurant.auth.PasswordUtil;
 import br.com.restaurant.restaurant.controller.UserController;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.repository.UserRepository;
@@ -35,8 +36,11 @@ public class UserService {
 
         logger.info("createUser: Validações de criação de usuário bem sucedidadas. AppUser: {}", appUser.toString());
 
+        String hashed = PasswordUtil.hash(appUser.getPassword());
+        appUser.setPassword(hashed);
+
         var create = this.userRepository.createUser(appUser);
-        Assert.state(create == 1, "Erro ao salvar usuário -> User: " + appUser);
+        Assert.state(create == 1, "createUser: Erro ao salvar usuário -> AppUser: " + appUser);
     }
 
     public List<AppUser> getAllAppUsers(int page, int size) {
@@ -53,12 +57,19 @@ public class UserService {
     }
 
     public void updateAppUser(Long id, AppUser appUser) {
+        logger.info("updateAppUser: Atualizado id do usuário a partir do id da URL. Id: " + id);
         appUser.setId(id);
 
+        logger.info("updateAppUser: Encriptografado senha para update");
+        String hashed = PasswordUtil.hash(appUser.getPassword());
+        appUser.setPassword(hashed);
+
+        logger.info("updateAppUser: Iniciado corrente validação de criação de usuário");
         AppUserValidationHandler uniqueLoginOnUpdateValidationHandler = new UniqueLoginOnUpdateValidationHandler(this.userRepository);
         AppUserValidationHandler emailFormatValidation = new EmailFormatValidationHandler();
         AppUserValidationHandler uniqueEmailOnUpdateValidationHandler = new UniqueEmailOnUpdateValidationHandler(this.userRepository);
 
+        logger.info("updateAppUser: Iniciado de fato validação de criação de usuário");
         uniqueLoginOnUpdateValidationHandler.setNext(emailFormatValidation);
         emailFormatValidation.setNext(uniqueEmailOnUpdateValidationHandler);
 
