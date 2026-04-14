@@ -11,6 +11,7 @@ public interface UserRepository {
     Optional<AppUser> getAppUserById(Long id);
     List<AppUser> getAppUserByName(String name);
     Integer updateAppUser(Long id, AppUser appUser);
+    Integer updateAppUserPassword(Long id, String password);
     Integer deleteAppUser(Long id);
     boolean existsByEmail(String email);
     List<AppUser> getAppUserByEmail(String email);

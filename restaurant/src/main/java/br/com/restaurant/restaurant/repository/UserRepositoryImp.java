@@ -77,7 +77,6 @@ public class UserRepositoryImp implements UserRepository{
                         "name = :name," +
                         "email = :email," +
                         "login = :login," +
-                        "password = :password," +
                         "address = :address," +
                         "user_type = :user_type," +
                         "last_update = :last_update " +
@@ -86,9 +85,22 @@ public class UserRepositoryImp implements UserRepository{
                 .param("name", appUser.getName())
                 .param("email", appUser.getEmail())
                 .param("login", appUser.getLogin())
-                .param("password", appUser.getPassword())
                 .param("address", appUser.getAddress())
                 .param("user_type", appUser.getUserType().name())
+                .param("last_update", agora)
+                .update();
+    }
+
+    @Override
+    public Integer updateAppUserPassword(Long id, String password) {
+        LocalDateTime agora = LocalDateTime.now();
+        return this.jdbcClient
+                .sql("UPDATE users set " +
+                        "password = :password," +
+                        "last_update = :last_update " +
+                        "WHERE id = :id")
+                .param("id", id)
+                .param("password", password)
                 .param("last_update", agora)
                 .update();
     }

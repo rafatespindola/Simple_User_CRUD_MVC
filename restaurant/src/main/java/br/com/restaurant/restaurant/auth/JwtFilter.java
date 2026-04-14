@@ -29,16 +29,22 @@ public class JwtFilter extends OncePerRequestFilter {
         String method = request.getMethod();
 
         // libera login
-        if (path.startsWith("/auth")) {
+        if (
+            path.startsWith("/auth") ||
+            (path.equals("/api/v1/users") && method.equals("POST")) ||
+            path.startsWith("/swagger-ui") ||
+            path.startsWith("/v3/api-docs") ||
+            path.startsWith("/swagger-ui.html")
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // libera criação de usuário
-        if (path.equals("/api/v1/users") && method.equals("POST")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+//        // libera criação de usuário
+//        if (path.equals("/api/v1/users") && method.equals("POST")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
         String header = request.getHeader("Authorization");
 

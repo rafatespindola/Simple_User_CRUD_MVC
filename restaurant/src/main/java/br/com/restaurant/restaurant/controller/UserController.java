@@ -1,5 +1,6 @@
 package br.com.restaurant.restaurant.controller;
 
+import br.com.restaurant.restaurant.dto.UpdatePasswordRequestDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.service.UserService;
 import jakarta.websocket.server.PathParam;
@@ -72,6 +73,16 @@ public class UserController {
     ) {
         logger.info("PUT -> /api/v1/users/{id} -> updateAppUser -> id: {}, AppUser: {}", id, appUser.toString());
         this.userService.updateAppUser(id, appUser);
+        return ResponseEntity.status(204).build();
+    }
+
+    @PatchMapping("/password/{id}")
+    public ResponseEntity<Void> updateAppUserPassword(
+            @PathVariable Long id,
+            @RequestBody UpdatePasswordRequestDTO request
+    ) {
+        logger.info("Patch -> /api/v1/users/password/{id} -> updateAppUserPassword -> id: {}, Password: {}", id, request.password());
+        this.userService.updateAppUserPassword(id, request.password());
         return ResponseEntity.status(204).build();
     }
 

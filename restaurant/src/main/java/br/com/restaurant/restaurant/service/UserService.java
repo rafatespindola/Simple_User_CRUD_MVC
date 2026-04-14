@@ -57,12 +57,8 @@ public class UserService {
     }
 
     public void updateAppUser(Long id, AppUser appUser) {
-        logger.info("updateAppUser: Atualizado id do usuário a partir do id da URL. Id: " + id);
+        logger.info("updateAppUser: Atualizado id do usuário a partir do id da URL. Id: {}", id);
         appUser.setId(id);
-
-        logger.info("updateAppUser: Encriptografado senha para update");
-        String hashed = PasswordUtil.hash(appUser.getPassword());
-        appUser.setPassword(hashed);
 
         logger.info("updateAppUser: Iniciado corrente validação de criação de usuário");
         AppUserValidationHandler uniqueLoginOnUpdateValidationHandler = new UniqueLoginOnUpdateValidationHandler(this.userRepository);
@@ -78,6 +74,14 @@ public class UserService {
         logger.info("updateAppUser: Validações de atualização do usuário bem sucedidas. Email: " + appUser.getEmail());
         var update = this.userRepository.updateAppUser(id, appUser);
         Assert.state(update == 1, "Erro ao atualizar appUser. Id: " + id + " AppUser: " + appUser.toString());
+    }
+
+    public void updateAppUserPassword(Long id, String password) {
+        logger.info("updateAppUserPassword: Criptografado senha para update");
+        String hashed = PasswordUtil.hash(password);
+
+        var update = this.userRepository.updateAppUserPassword(id, hashed);
+        Assert.state(update == 1, "Erro ao atualizar senha do appUser de Id: " + id + " Senha: " + hashed);
     }
 
     public void deleteAppUser(Long id) {
