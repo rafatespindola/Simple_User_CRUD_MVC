@@ -1,5 +1,6 @@
 package br.com.restaurant.restaurant.entity;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;

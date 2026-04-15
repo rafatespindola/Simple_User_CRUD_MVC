@@ -2,6 +2,7 @@ package br.com.restaurant.restaurant.validation.appUser;
 
 import br.com.restaurant.restaurant.controller.UserController;
 import br.com.restaurant.restaurant.entity.AppUser;
+import br.com.restaurant.restaurant.exception.BusinessException;
 import br.com.restaurant.restaurant.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ public class UniqueEmailValidationHandler extends AppUserValidationHandler{
         boolean alreadyExistsUserEmail = this.userRepository.existsByEmail(appUser.getEmail());
 
         if (alreadyExistsUserEmail) {
-            throw new IllegalArgumentException("E-mail já utilizado por outro usuário");
+            throw new BusinessException("E-mail já utilizado por outro usuário");
         }
 
         logger.info("E-mail ainda não utilizado");

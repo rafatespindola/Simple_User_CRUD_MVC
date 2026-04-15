@@ -3,6 +3,7 @@ package br.com.restaurant.restaurant.controller;
 import br.com.restaurant.restaurant.dto.UpdatePasswordRequestDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.service.UserService;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,7 @@ public class UserController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<AppUser>> getAppUserById(
+    public ResponseEntity<AppUser> getAppUserById(
             @PathVariable("id") Long id
     ) {
         logger.info("GET -> /api/v1/users/{id} -> getAppUserById -> id: {}", id);
@@ -75,6 +76,7 @@ public class UserController {
         this.userService.updateAppUser(id, appUser);
         return ResponseEntity.status(204).build();
     }
+
 
     @PatchMapping("/password/{id}")
     public ResponseEntity<Void> updateAppUserPassword(

@@ -3,6 +3,9 @@ package br.com.restaurant.restaurant.service;
 import br.com.restaurant.restaurant.auth.PasswordUtil;
 import br.com.restaurant.restaurant.controller.UserController;
 import br.com.restaurant.restaurant.entity.AppUser;
+import br.com.restaurant.restaurant.exception.BusinessException;
+import br.com.restaurant.restaurant.exception.CreateResourceException;
+import br.com.restaurant.restaurant.exception.ResourceNotFoundException;
 import br.com.restaurant.restaurant.repository.UserRepository;
 import br.com.restaurant.restaurant.validation.appUser.*;
 import org.slf4j.Logger;
@@ -32,15 +35,18 @@ public class UserService {
         uniqueLoginValidation.setNext(emailFormatValidation);
         emailFormatValidation.setNext(uniqueEmailValidation);
 
+        logger.info("createUser: Inicia validações. AppUser: {}", appUser.toString());
         uniqueLoginValidation.handle(appUser);
-
         logger.info("createUser: Validações de criação de usuário bem sucedidadas. AppUser: {}", appUser.toString());
 
         String hashed = PasswordUtil.hash(appUser.getPassword());
         appUser.setPassword(hashed);
 
         var create = this.userRepository.createUser(appUser);
-        Assert.state(create == 1, "createUser: Erro ao salvar usuário -> AppUser: " + appUser);
+
+        if (create != 1) {
+            throw new CreateResourceException("Erro ao criar usuário. AppUser: "+ appUser.toString());
+        }
     }
 
     public List<AppUser> getAllAppUsers(int page, int size) {
@@ -52,8 +58,9 @@ public class UserService {
         return this.userRepository.getAppUserByName(name);
     }
 
-    public Optional<AppUser> getAppUserById(Long id) {
-        return this.userRepository.getAppUserById(id);
+    public AppUser getAppUserById(Long id) {
+        return this.userRepository.getAppUserById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado pelo ID. Id: " + id));
     }
 
     public void updateAppUser(Long id, AppUser appUser) {
@@ -73,7 +80,10 @@ public class UserService {
 
         logger.info("updateAppUser: Validações de atualização do usuário bem sucedidas. Email: " + appUser.getEmail());
         var update = this.userRepository.updateAppUser(id, appUser);
-        Assert.state(update == 1, "Erro ao atualizar appUser. Id: " + id + " AppUser: " + appUser.toString());
+
+        if (update == 0) {
+            throw new ResourceNotFoundException("Erro ao atualizar appUser. Id: " + id + " AppUser: " + appUser.toString());
+        }
     }
 
     public void updateAppUserPassword(Long id, String password) {
@@ -81,11 +91,17 @@ public class UserService {
         String hashed = PasswordUtil.hash(password);
 
         var update = this.userRepository.updateAppUserPassword(id, hashed);
-        Assert.state(update == 1, "Erro ao atualizar senha do appUser de Id: " + id + " Senha: " + hashed);
+
+        if (update == 0) {
+            throw new ResourceNotFoundException("Erro ao atualizar senha. Usuário não encontrado. Id: " + id);
+        }
     }
 
     public void deleteAppUser(Long id) {
         var delete = this.userRepository.deleteAppUser(id);
-        Assert.state(delete == 1, "Erro ao deletar appUser. Id: " + id);
+
+        if (delete == 0) {
+            throw new ResourceNotFoundException("Erro ao deletar usuário. Usuário não existente para id informado. Id informado: " + id);
+        }
     }
 }
