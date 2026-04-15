@@ -4,15 +4,18 @@ import br.com.restaurant.restaurant.dto.UpdatePasswordRequestDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.websocket.server.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+@Validated
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
@@ -28,7 +31,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<AppUser> createUser(
-        @RequestBody AppUser appUser
+        @RequestBody @Valid AppUser appUser
     ) {
         logger.info("POST -> /api/v1/users -> createUser -> User: {}", appUser.toString());
         this.userService.createUser(appUser);
@@ -38,8 +41,8 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<AppUser>> getAllAppUsers(
-            @RequestParam("page") int page,
-            @RequestParam("size") int size
+            @RequestParam("page") @Min(1) int page,
+            @RequestParam("size") @Min(1) int size
     ) {
         logger.info("GET -> /api/v1/users -> getAllAppUsers -> Page: {}, Size: {}", page, size);
         var appUsers = this.userService.getAllAppUsers(page, size);

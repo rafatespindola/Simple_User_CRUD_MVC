@@ -67,7 +67,7 @@ public class UserService {
         logger.info("updateAppUser: Atualizado id do usuário a partir do id da URL. Id: {}", id);
         appUser.setId(id);
 
-        logger.info("updateAppUser: Iniciado corrente validação de criação de usuário");
+        logger.info("updateAppUser: Criando corrente de validações de criação de usuário");
         AppUserValidationHandler uniqueLoginOnUpdateValidationHandler = new UniqueLoginOnUpdateValidationHandler(this.userRepository);
         AppUserValidationHandler emailFormatValidation = new EmailFormatValidationHandler();
         AppUserValidationHandler uniqueEmailOnUpdateValidationHandler = new UniqueEmailOnUpdateValidationHandler(this.userRepository);
@@ -78,7 +78,7 @@ public class UserService {
 
         uniqueLoginOnUpdateValidationHandler.handle(appUser);
 
-        logger.info("updateAppUser: Validações de atualização do usuário bem sucedidas. Email: " + appUser.getEmail());
+        logger.info("updateAppUser: Validações de atualização do usuário bem sucedidas");
         var update = this.userRepository.updateAppUser(id, appUser);
 
         if (update == 0) {
@@ -101,7 +101,7 @@ public class UserService {
         var delete = this.userRepository.deleteAppUser(id);
 
         if (delete == 0) {
-            throw new ResourceNotFoundException("Erro ao deletar usuário. Usuário não existente para id informado. Id informado: " + id);
+            throw new ResourceNotFoundException("Erro ao deletar usuário. Id: " + id);
         }
     }
 }
