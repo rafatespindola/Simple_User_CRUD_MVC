@@ -8,26 +8,29 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
-public record CreateAppUserDTO(
+public record UpdateAppUserDTO(
 
-        @NotBlank(message = "'name' é obrigatório")
+        @NotNull(message = "Campo obrigatório")
+        Long id,
+
+        @NotBlank(message = "Campo obrigatório")
         String name,
 
-        @NotBlank(message = "'email' é obrigatório")
+        @NotBlank(message = "Campo obrigatório")
         @Email(message = "Email inválido")
         String email,
 
-        @NotBlank(message = "'login' é obrigatório")
+        @NotBlank(message = "Campo obrigatório")
         String login,
 
-        @NotBlank(message = "'password' é obrigatório")
+        @NotBlank(message = "Campo obrigatório")
         @Size(min = 6, message = "A senha deve conter no mínimo 6 caracteres")
         String password,
 
-        @NotBlank(message = "'address' é obrigatório")
+        @NotBlank(message = "Campo obrigatório")
         String address,
 
-        @NotNull(message = "'userType' é obrigatório")
+        @NotNull(message = "Campo obrigatório")
         UserType userType
 ) {
 

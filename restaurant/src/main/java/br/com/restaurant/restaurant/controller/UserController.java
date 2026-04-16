@@ -1,5 +1,7 @@
 package br.com.restaurant.restaurant.controller;
 
+import br.com.restaurant.restaurant.dto.CreateAppUserDTO;
+import br.com.restaurant.restaurant.dto.UpdateAppUserDTO;
 import br.com.restaurant.restaurant.dto.UpdatePasswordRequestDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.service.UserService;
@@ -30,11 +32,11 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<AppUser> createUser(
-        @RequestBody @Valid AppUser appUser
+    public ResponseEntity<AppUser> createAppUser(
+            @RequestBody @Valid CreateAppUserDTO createAppUserDTO
     ) {
-        logger.info("POST -> /api/v1/users -> createUser -> User: {}", appUser.toString());
-        this.userService.createUser(appUser);
+        logger.info("POST -> /api/v1/users -> createAppUser -> AppUser: {}", createAppUserDTO.toString());
+        this.userService.createAppUser(createAppUserDTO);
         return ResponseEntity.status(201).build();
     }
 
@@ -70,13 +72,12 @@ public class UserController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<Void> updateAppUser(
-            @PathVariable Long id,
-            @RequestBody AppUser appUser
+            @RequestBody @Valid UpdateAppUserDTO appUser
     ) {
-        logger.info("PUT -> /api/v1/users/{id} -> updateAppUser -> id: {}, AppUser: {}", id, appUser.toString());
-        this.userService.updateAppUser(id, appUser);
+        logger.info("PUT -> /api/v1/users/{id} -> updateAppUser -> AppUser: {}", appUser.toString());
+        this.userService.updateAppUser(appUser);
         return ResponseEntity.status(204).build();
     }
 

@@ -1,6 +1,7 @@
 package br.com.restaurant.restaurant.validation.appUser;
 
 import br.com.restaurant.restaurant.controller.UserController;
+import br.com.restaurant.restaurant.dto.CreateAppUserDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.exception.BusinessException;
 import br.com.restaurant.restaurant.repository.UserRepository;
@@ -17,8 +18,8 @@ public class UniqueEmailValidationHandler extends AppUserValidationHandler{
     }
 
     @Override
-    public void handle(AppUser appUser) {
-        boolean alreadyExistsUserEmail = this.userRepository.existsByEmail(appUser.getEmail());
+    public void handle(CreateAppUserDTO appUser) {
+        boolean alreadyExistsUserEmail = this.userRepository.existsByEmail(appUser.email());
 
         if (alreadyExistsUserEmail) {
             throw new BusinessException("E-mail já utilizado por outro usuário");

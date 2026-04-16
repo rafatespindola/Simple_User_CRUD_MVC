@@ -1,5 +1,7 @@
 package br.com.restaurant.restaurant.repository;
 
+import br.com.restaurant.restaurant.dto.CreateAppUserDTO;
+import br.com.restaurant.restaurant.dto.UpdateAppUserDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -18,19 +20,19 @@ public class UserRepositoryImp implements UserRepository{
 
 
     @Override
-    public Integer createUser(AppUser appUser) {
+    public Integer createUser(CreateAppUserDTO appUser, String password) {
         LocalDateTime agora = LocalDateTime.now();
         return this.jdbcClient
                 .sql("""
                     INSERT INTO users (name, email, login, password, address, user_type, last_update)
                     VALUES (:name, :email, :login, :password, :address, :user_type, :last_update)
                 """)
-                .param("name", appUser.getName())
-                .param("email", appUser.getEmail())
-                .param("login", appUser.getLogin())
-                .param("password", appUser.getPassword())
-                .param("address", appUser.getAddress())
-                .param("user_type", appUser.getUserType().name())
+                .param("name", appUser.name())
+                .param("email", appUser.email())
+                .param("login", appUser.login())
+                .param("password", password)
+                .param("address", appUser.address())
+                .param("user_type", appUser.userType().name())
                 .param("last_update", agora)
                 .update();
     }
@@ -70,7 +72,7 @@ public class UserRepositoryImp implements UserRepository{
 
 
     @Override
-    public Integer updateAppUser(Long id, AppUser appUser) {
+    public Integer updateAppUser(UpdateAppUserDTO appUser) {
         LocalDateTime agora = LocalDateTime.now();
         return this.jdbcClient
                 .sql("UPDATE users set " +
@@ -81,12 +83,12 @@ public class UserRepositoryImp implements UserRepository{
                         "user_type = :user_type," +
                         "last_update = :last_update " +
                         "WHERE id = :id")
-                .param("id", id)
-                .param("name", appUser.getName())
-                .param("email", appUser.getEmail())
-                .param("login", appUser.getLogin())
-                .param("address", appUser.getAddress())
-                .param("user_type", appUser.getUserType().name())
+                .param("id", appUser.id())
+                .param("name", appUser.name())
+                .param("email", appUser.email())
+                .param("login", appUser.login())
+                .param("address", appUser.address())
+                .param("user_type", appUser.userType().name())
                 .param("last_update", agora)
                 .update();
     }

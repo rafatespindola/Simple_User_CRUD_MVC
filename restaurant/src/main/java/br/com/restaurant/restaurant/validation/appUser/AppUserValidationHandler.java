@@ -1,6 +1,6 @@
 package br.com.restaurant.restaurant.validation.appUser;
 
-import br.com.restaurant.restaurant.entity.AppUser;
+import br.com.restaurant.restaurant.dto.CreateAppUserDTO;
 
 public abstract class AppUserValidationHandler {
     protected AppUserValidationHandler next;
@@ -10,5 +10,5 @@ public abstract class AppUserValidationHandler {
         return next;
     }
 
-    public abstract void handle(AppUser appUser);
+    public abstract void handle(CreateAppUserDTO appUser);
 }

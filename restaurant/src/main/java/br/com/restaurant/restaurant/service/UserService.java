@@ -2,6 +2,8 @@ package br.com.restaurant.restaurant.service;
 
 import br.com.restaurant.restaurant.auth.PasswordUtil;
 import br.com.restaurant.restaurant.controller.UserController;
+import br.com.restaurant.restaurant.dto.CreateAppUserDTO;
+import br.com.restaurant.restaurant.dto.UpdateAppUserDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.exception.BusinessException;
 import br.com.restaurant.restaurant.exception.CreateResourceException;
@@ -27,25 +29,42 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void createUser(AppUser appUser) {
+
+    public void createAppUser(CreateAppUserDTO appUser) {
         AppUserValidationHandler uniqueLoginValidation = new UniqueLoginValidationHandler(this.userRepository);
-        AppUserValidationHandler emailFormatValidation = new EmailFormatValidationHandler();
         AppUserValidationHandler uniqueEmailValidation = new UniqueEmailValidationHandler(this.userRepository);
 
-        uniqueLoginValidation.setNext(emailFormatValidation);
-        emailFormatValidation.setNext(uniqueEmailValidation);
+        uniqueLoginValidation.setNext(uniqueEmailValidation);
 
         logger.info("createUser: Inicia validações. AppUser: {}", appUser.toString());
         uniqueLoginValidation.handle(appUser);
         logger.info("createUser: Validações de criação de usuário bem sucedidadas. AppUser: {}", appUser.toString());
 
-        String hashed = PasswordUtil.hash(appUser.getPassword());
-        appUser.setPassword(hashed);
+        String hashedPassword = PasswordUtil.hash(appUser.password());
 
-        var create = this.userRepository.createUser(appUser);
+        var create = this.userRepository.createUser(appUser, hashedPassword);
 
         if (create != 1) {
             throw new CreateResourceException("Erro ao criar usuário. AppUser: "+ appUser.toString());
+        }
+    }
+
+    public void updateAppUser(UpdateAppUserDTO appUser) {
+        logger.info("updateAppUser: Criando corrente de validações de criação de usuário");
+
+        AppUserValidationOnUpdateHandler uniqueLoginOnUpdateValidationHandler = new UniqueLoginOnUpdateValidationHandler(this.userRepository);
+        AppUserValidationOnUpdateHandler uniqueEmailOnUpdateValidationHandler = new UniqueEmailOnUpdateValidationHandler(this.userRepository);
+
+        logger.info("updateAppUser: Iniciado de fato validação de criação de usuário");
+        uniqueLoginOnUpdateValidationHandler.setNext(uniqueEmailOnUpdateValidationHandler);
+
+        uniqueLoginOnUpdateValidationHandler.handle(appUser);
+
+        logger.info("updateAppUser: Validações de atualização do usuário bem sucedidas");
+        var update = this.userRepository.updateAppUser(appUser);
+
+        if (update == 0) {
+            throw new ResourceNotFoundException("Erro ao atualizar appUser. AppUser: " + appUser.toString());
         }
     }
 
@@ -63,28 +82,6 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado pelo Id: " + id));
     }
 
-    public void updateAppUser(Long id, AppUser appUser) {
-        logger.info("updateAppUser: Atualizado id do usuário a partir do id da URL. Id: {}", id);
-        appUser.setId(id);
-
-        logger.info("updateAppUser: Criando corrente de validações de criação de usuário");
-        AppUserValidationHandler uniqueLoginOnUpdateValidationHandler = new UniqueLoginOnUpdateValidationHandler(this.userRepository);
-        AppUserValidationHandler emailFormatValidation = new EmailFormatValidationHandler();
-        AppUserValidationHandler uniqueEmailOnUpdateValidationHandler = new UniqueEmailOnUpdateValidationHandler(this.userRepository);
-
-        logger.info("updateAppUser: Iniciado de fato validação de criação de usuário");
-        uniqueLoginOnUpdateValidationHandler.setNext(emailFormatValidation);
-        emailFormatValidation.setNext(uniqueEmailOnUpdateValidationHandler);
-
-        uniqueLoginOnUpdateValidationHandler.handle(appUser);
-
-        logger.info("updateAppUser: Validações de atualização do usuário bem sucedidas");
-        var update = this.userRepository.updateAppUser(id, appUser);
-
-        if (update == 0) {
-            throw new ResourceNotFoundException("Erro ao atualizar appUser. Id: " + id + " AppUser: " + appUser.toString());
-        }
-    }
 
     public void updateAppUserPassword(Long id, String password) {
         logger.info("updateAppUserPassword: Criptografado senha para update");
