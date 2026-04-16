@@ -10,9 +10,6 @@ import java.time.LocalDateTime;
 
 public record UpdateAppUserDTO(
 
-        @NotNull(message = "Campo obrigatório")
-        Long id,
-
         @NotBlank(message = "Campo obrigatório")
         String name,
 

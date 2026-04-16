@@ -10,5 +10,5 @@ public abstract class AppUserValidationOnUpdateHandler {
         return next;
     }
 
-    public abstract void handle(UpdateAppUserDTO appUser);
+    public abstract void handle(UpdateAppUserDTO appUser, Long id);
 }

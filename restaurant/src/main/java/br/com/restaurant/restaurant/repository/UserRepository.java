@@ -12,7 +12,7 @@ public interface UserRepository {
     List<AppUser> getAllAppUsers(int size, int offset);
     Optional<AppUser> getAppUserById(Long id);
     List<AppUser> getAppUserByName(String name);
-    Integer updateAppUser(UpdateAppUserDTO appUser);
+    Integer updateAppUser(UpdateAppUserDTO appUser, Long id);
     Integer updateAppUserPassword(Long id, String password);
     Integer deleteAppUser(Long id);
     boolean existsByEmail(String email);

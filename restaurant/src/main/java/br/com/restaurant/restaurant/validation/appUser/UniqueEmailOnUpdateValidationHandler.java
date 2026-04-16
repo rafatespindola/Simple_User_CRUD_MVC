@@ -1,7 +1,6 @@
 package br.com.restaurant.restaurant.validation.appUser;
 
 import br.com.restaurant.restaurant.controller.UserController;
-import br.com.restaurant.restaurant.dto.CreateAppUserDTO;
 import br.com.restaurant.restaurant.dto.UpdateAppUserDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.exception.BusinessException;
@@ -22,12 +21,12 @@ public class UniqueEmailOnUpdateValidationHandler extends AppUserValidationOnUpd
     }
 
     @Override
-    public void handle(UpdateAppUserDTO appUser) {
+    public void handle(UpdateAppUserDTO appUser, Long id) {
         List<AppUser> appUserList = this.userRepository.getAppUserByEmail(appUser.email());
 
         if (!appUserList.isEmpty()) {
             if (appUserList.size() == 1){
-                if (!Objects.equals(appUserList.getFirst().getId(), appUser.id())){
+                if (!Objects.equals(appUserList.getFirst().getId(), id)){
                     throw new BusinessException("E-mail já é utilizado por outro usuário"
                     );
                 }
@@ -39,7 +38,7 @@ public class UniqueEmailOnUpdateValidationHandler extends AppUserValidationOnUpd
         logger.info("E-mail ainda não utilizado ou no máximo utilizado pelo próprio usuário a ser atualizado");
 
         if (next != null) {
-            next.handle(appUser);
+            next.handle(appUser, id);
         }
     }
 

@@ -5,7 +5,6 @@ import br.com.restaurant.restaurant.controller.UserController;
 import br.com.restaurant.restaurant.dto.CreateAppUserDTO;
 import br.com.restaurant.restaurant.dto.UpdateAppUserDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
-import br.com.restaurant.restaurant.exception.BusinessException;
 import br.com.restaurant.restaurant.exception.CreateResourceException;
 import br.com.restaurant.restaurant.exception.ResourceNotFoundException;
 import br.com.restaurant.restaurant.repository.UserRepository;
@@ -13,10 +12,8 @@ import br.com.restaurant.restaurant.validation.appUser.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -49,7 +46,7 @@ public class UserService {
         }
     }
 
-    public void updateAppUser(UpdateAppUserDTO appUser) {
+    public void updateAppUser(UpdateAppUserDTO appUser, Long id) {
         logger.info("updateAppUser: Criando corrente de validações de criação de usuário");
 
         AppUserValidationOnUpdateHandler uniqueLoginOnUpdateValidationHandler = new UniqueLoginOnUpdateValidationHandler(this.userRepository);
@@ -58,10 +55,10 @@ public class UserService {
         logger.info("updateAppUser: Iniciado de fato validação de criação de usuário");
         uniqueLoginOnUpdateValidationHandler.setNext(uniqueEmailOnUpdateValidationHandler);
 
-        uniqueLoginOnUpdateValidationHandler.handle(appUser);
+        uniqueLoginOnUpdateValidationHandler.handle(appUser, id);
 
         logger.info("updateAppUser: Validações de atualização do usuário bem sucedidas");
-        var update = this.userRepository.updateAppUser(appUser);
+        var update = this.userRepository.updateAppUser(appUser, id);
 
         if (update == 0) {
             throw new ResourceNotFoundException("Erro ao atualizar appUser. AppUser: " + appUser.toString());

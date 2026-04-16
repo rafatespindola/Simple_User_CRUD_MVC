@@ -72,12 +72,13 @@ public class UserController {
     }
 
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<Void> updateAppUser(
-            @RequestBody @Valid UpdateAppUserDTO appUser
+            @RequestBody @Valid UpdateAppUserDTO appUser,
+            @PathVariable Long id
     ) {
-        logger.info("PUT -> /api/v1/users/{id} -> updateAppUser -> AppUser: {}", appUser.toString());
-        this.userService.updateAppUser(appUser);
+        logger.info("PUT -> /api/v1/users/{id} -> updateAppUser -> id: {} -> AppUser: {}", id, appUser.toString());
+        this.userService.updateAppUser(appUser, id);
         return ResponseEntity.status(204).build();
     }
 

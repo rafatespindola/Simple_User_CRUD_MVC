@@ -72,7 +72,7 @@ public class UserRepositoryImp implements UserRepository{
 
 
     @Override
-    public Integer updateAppUser(UpdateAppUserDTO appUser) {
+    public Integer updateAppUser(UpdateAppUserDTO appUser, Long id) {
         LocalDateTime agora = LocalDateTime.now();
         return this.jdbcClient
                 .sql("UPDATE users set " +
@@ -83,7 +83,7 @@ public class UserRepositoryImp implements UserRepository{
                         "user_type = :user_type," +
                         "last_update = :last_update " +
                         "WHERE id = :id")
-                .param("id", appUser.id())
+                .param("id", id)
                 .param("name", appUser.name())
                 .param("email", appUser.email())
                 .param("login", appUser.login())
