@@ -84,7 +84,7 @@ public class UserController {
     @PatchMapping("/password/{id}")
     public ResponseEntity<Void> updateAppUserPassword(
             @PathVariable Long id,
-            @RequestBody UpdatePasswordRequestDTO request
+            @RequestBody @Valid UpdatePasswordRequestDTO request
     ) {
         logger.info("Patch -> /api/v1/users/password/{id} -> updateAppUserPassword -> id: {}, Password: {}", id, request.password());
         this.userService.updateAppUserPassword(id, request.password());

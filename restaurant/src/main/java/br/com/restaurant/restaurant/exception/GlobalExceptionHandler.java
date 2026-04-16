@@ -7,6 +7,7 @@ import org.springframework.cglib.core.Local;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -132,6 +133,21 @@ public class GlobalExceptionHandler {
                 .toList();
 
         problem.setProperty("errors", errors);
+
+        return problem;
+    }
+
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ProblemDetail handleMissingServletRequestParameter(MissingServletRequestParameterException ex) {
+        ex.printStackTrace();
+
+        ProblemDetail problem = ProblemDetail.forStatus(400);
+
+        problem.setTitle("Parâmetro faltante");
+        problem.setDetail("O parâmetro '" + ex.getParameterName() + "' é obrigatório");
+        problem.setProperty("timestamp", LocalDateTime.now());
+        problem.setProperty("type", "/errors/missing-parameter");
 
         return problem;
     }
