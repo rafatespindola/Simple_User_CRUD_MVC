@@ -5,8 +5,10 @@ import br.com.restaurant.restaurant.dto.UpdateAppUserDTO;
 import br.com.restaurant.restaurant.dto.UpdatePasswordRequestDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.websocket.server.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@SecurityRequirement(name = "bearerAuth")
 @Validated
 @RestController
 @RequestMapping("/api/v1/users")
@@ -54,7 +57,7 @@ public class UserController {
 
     @GetMapping("/name")
     public ResponseEntity<List<AppUser>> getAppUserByName(
-            @RequestParam("name") String name
+            @RequestParam @NotBlank(message = "O parâmetro 'name' não pode ser vazio") String name
     ) {
         logger.info("GET -> /api/v1/users/ -> getAppUserByName -> Param name: {}", name);
         var appUser = this.userService.getAppUserByName(name);
