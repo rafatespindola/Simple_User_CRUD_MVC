@@ -21,10 +21,6 @@ public record UpdateAppUserDTO(
         String login,
 
         @NotBlank(message = "Campo obrigatório")
-        @Size(min = 6, message = "A senha deve conter no mínimo 6 caracteres")
-        String password,
-
-        @NotBlank(message = "Campo obrigatório")
         String address,
 
         @NotNull(message = "Campo obrigatório")
