@@ -60,7 +60,7 @@ public class UserService {
 
     public AppUser getAppUserById(Long id) {
         return this.userRepository.getAppUserById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado pelo ID. Id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado pelo Id: " + id));
     }
 
     public void updateAppUser(Long id, AppUser appUser) {

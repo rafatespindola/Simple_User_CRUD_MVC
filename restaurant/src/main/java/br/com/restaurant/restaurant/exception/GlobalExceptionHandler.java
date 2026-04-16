@@ -1,9 +1,11 @@
 package br.com.restaurant.restaurant.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cglib.core.Local;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -98,6 +100,35 @@ public class GlobalExceptionHandler {
                 .getFieldErrors()
                 .stream()
                 .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .toList();
+
+        problem.setProperty("errors", errors);
+
+        return problem;
+    }
+
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ProblemDetail handleConstraintViolation(ConstraintViolationException ex) {
+
+        ex.printStackTrace();
+
+        ProblemDetail problem = ProblemDetail.forStatus(400);
+
+        problem.setTitle("Parâmetro(s) inválidos(s)");
+
+        List<String> errors = ex.getConstraintViolations()
+                .stream()
+                .map(violation -> {
+                    String field = violation.getPropertyPath().toString();
+
+                    // remove prefixo tipo "getAllAppUsers."
+                    if (field.contains(".")) {
+                        field = field.substring(field.lastIndexOf(".") + 1);
+                    }
+
+                    return field + ": " + violation.getMessage();
+                })
                 .toList();
 
         problem.setProperty("errors", errors);
