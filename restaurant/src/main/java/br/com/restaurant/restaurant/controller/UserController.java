@@ -3,6 +3,7 @@ package br.com.restaurant.restaurant.controller;
 import br.com.restaurant.restaurant.dto.CreateAppUserDTO;
 import br.com.restaurant.restaurant.dto.UpdateAppUserDTO;
 import br.com.restaurant.restaurant.dto.UpdatePasswordRequestDTO;
+import br.com.restaurant.restaurant.dto.AppUsersResponseDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.websocket.server.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @SecurityRequirement(name = "bearerAuth")
 @Validated
@@ -56,7 +55,7 @@ public class UserController {
             description = "Retorna uma lista de usuários de acordo com os parâmetros size e page. Ambos iniciam em 1"
     )
     @GetMapping
-    public ResponseEntity<List<AppUser>> getAllAppUsers(
+    public ResponseEntity<List<AppUsersResponseDTO>> getAllAppUsers(
             @Parameter(
                     description = "Página da lista de usuários",
                     example = "1",
@@ -81,7 +80,7 @@ public class UserController {
             description = "Retorna uma lista de usuários que contenham o nome informado"
     )
     @GetMapping("/name")
-    public ResponseEntity<List<AppUser>> getAppUserByName(
+    public ResponseEntity<List<AppUsersResponseDTO>> getAppUserByName(
             @Parameter(
                     description = "Nome do usuário para busca",
                     example = "Rafael",
@@ -100,7 +99,7 @@ public class UserController {
             description = "Retona um usuário, se houver"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<AppUser> getAppUserById(
+    public ResponseEntity<AppUsersResponseDTO> getAppUserById(
             @PathVariable @Parameter(
                     description = "Id do usuário",
                     example = "1",
@@ -152,7 +151,7 @@ public class UserController {
             )
             @RequestBody @Valid UpdatePasswordRequestDTO request
     ) {
-        logger.info("Patch -> /api/v1/users/password/{id} -> updateAppUserPassword -> id: {}, Password: {}", id, request.password());
+        logger.info("Patch -> /api/v1/users/password/{id} -> updateAppUserPassword -> id: {}", id);
         this.userService.updateAppUserPassword(id, request.password());
         return ResponseEntity.status(204).build();
     }

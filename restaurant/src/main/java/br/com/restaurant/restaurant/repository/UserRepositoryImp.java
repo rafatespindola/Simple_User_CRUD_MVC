@@ -2,6 +2,7 @@ package br.com.restaurant.restaurant.repository;
 
 import br.com.restaurant.restaurant.dto.CreateAppUserDTO;
 import br.com.restaurant.restaurant.dto.UpdateAppUserDTO;
+import br.com.restaurant.restaurant.dto.AppUsersResponseDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -39,34 +40,34 @@ public class UserRepositoryImp implements UserRepository{
 
 
     @Override
-    public List<AppUser> getAllAppUsers(int size, int offset) {
+    public List<AppUsersResponseDTO> getAllAppUsers(int size, int offset) {
         return this.jdbcClient
                 .sql("SELECT * FROM users LIMIT :size OFFSET :offset")
                 .param("size", size)
                 .param("offset", offset)
-                .query(AppUser.class)
+                .query(AppUsersResponseDTO.class)
                 .list();
     }
 
 
     @Override
-    public List<AppUser> getAppUserByName(String name) {
+    public List<AppUsersResponseDTO> getAppUserByName(String name) {
         return this.jdbcClient
                     .sql("SELECT * " +
                             "FROM users " +
                             "WHERE TRIM(LOWER(name)) LIKE TRIM(LOWER(CONCAT('%', :name, '%')));")
                 .param("name", name)
-                .query(AppUser.class)
+                .query(AppUsersResponseDTO.class)
                 .list();
     }
 
 
     @Override
-    public Optional<AppUser> getAppUserById(Long id) {
+    public Optional<AppUsersResponseDTO> getAppUserById(Long id) {
         return this.jdbcClient
                 .sql("SELECT * FROM users WHERE id = :id")
                 .param("id", id)
-                .query(AppUser.class)
+                .query(AppUsersResponseDTO.class)
                 .optional();
     }
 

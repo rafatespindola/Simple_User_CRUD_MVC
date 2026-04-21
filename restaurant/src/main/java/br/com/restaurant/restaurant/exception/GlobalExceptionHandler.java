@@ -52,6 +52,19 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(LoginException.class)
+    public ProblemDetail handleBusiness(LoginException ex) {
+        logger.warn("Erro no login: {}", ex.getMessage());
+
+        ProblemDetail problem = ProblemDetail.forStatus(400);
+
+        problem.setTitle("Erro no login");
+        problem.setDetail(ex.getMessage());
+        problem.setProperty("timestamp", LocalDateTime.now());
+
+        return problem;
+    }
+
     @ExceptionHandler(EmailFormatException.class)
     public ProblemDetail handleEmailFormat(EmailFormatException ex) {
         logger.warn("Erro no formato do email: {}", ex.getMessage());

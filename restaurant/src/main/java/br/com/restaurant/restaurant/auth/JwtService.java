@@ -10,7 +10,7 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final String SECRET = "minha-chave-super-secreta-min-32-bytes";
+    private final String SECRET = System.getenv("JWT_SECRET");
 
     public String generateToken(Long userId, String login) {
         return Jwts.builder()

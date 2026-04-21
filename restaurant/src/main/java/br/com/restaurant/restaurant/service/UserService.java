@@ -1,9 +1,9 @@
 package br.com.restaurant.restaurant.service;
 
 import br.com.restaurant.restaurant.auth.PasswordUtil;
-import br.com.restaurant.restaurant.controller.UserController;
 import br.com.restaurant.restaurant.dto.CreateAppUserDTO;
 import br.com.restaurant.restaurant.dto.UpdateAppUserDTO;
+import br.com.restaurant.restaurant.dto.AppUsersResponseDTO;
 import br.com.restaurant.restaurant.entity.AppUser;
 import br.com.restaurant.restaurant.exception.CreateResourceException;
 import br.com.restaurant.restaurant.exception.ResourceNotFoundException;
@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 public class UserService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
 
@@ -65,16 +65,16 @@ public class UserService {
         }
     }
 
-    public List<AppUser> getAllAppUsers(int page, int size) {
+    public List<AppUsersResponseDTO> getAllAppUsers(int page, int size) {
         int offset = (page - 1) * size;
         return this.userRepository.getAllAppUsers(size, offset);
     }
 
-    public List<AppUser> getAppUserByName(String name) {
+    public List<AppUsersResponseDTO> getAppUserByName(String name) {
         return this.userRepository.getAppUserByName(name);
     }
 
-    public AppUser getAppUserById(Long id) {
+    public AppUsersResponseDTO getAppUserById(Long id) {
         return this.userRepository.getAppUserById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado pelo Id: " + id));
     }

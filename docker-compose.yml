@@ -27,6 +27,7 @@ services:
       DB_URL: jdbc:mysql://mysql:3306/restaurant
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      JWT_SECRET: WimdaW28HaABntyfUK1pBWQ8i95mOlIe
 
 volumes:
   mysql_data:

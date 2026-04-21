@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDateTime;
 
 public record CreateAppUserDTO(
 
@@ -38,4 +37,15 @@ public record CreateAppUserDTO(
         UserType userType
 ) {
 
+        // Removido password
+        @Override
+        public String toString() {
+                return "CreateAppUserDTO{" +
+                        "name='" + name + '\'' +
+                        ", email='" + email + '\'' +
+                        ", login='" + login + '\'' +
+                        ", address='" + address + '\'' +
+                        ", userType=" + userType +
+                        '}';
+        }
 }
